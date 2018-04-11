@@ -11,7 +11,7 @@ Includes some Espruino API wrapper methods. Hope to add some TX methods to read 
 Some examples of current usage below:
 
 ```go
-// Scan got 5 seconds
+// Scan for 5 seconds
 // accepts optional second param to filter based on substring of name
 puck := puckUART.Scan(5 * time.Second)
 
