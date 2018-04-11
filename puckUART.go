@@ -21,7 +21,7 @@ var uartServiceRXCharID = ble.MustParse("6e400002-b5a3-f393-e0a9-e50e24dcca9e")
 var uartServiceTXCharID = ble.MustParse("6e400003-b5a3-f393-e0a9-e50e24dcca9e")
 
 // Scan looks for pucks and can match optional filter
-func Scan(filter ...string) *Puck {
+func Scan(duration time.Duration, filter ...string) *Puck {
 	var filterString = "Puck.js"
 	p := Puck{}
 	p.device = make(map[string]ble.Addr)
@@ -42,7 +42,8 @@ func Scan(filter ...string) *Puck {
 	ble.SetDefaultDevice(d)
 
 	// scan
-	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), 4*time.Second))
+	log.Printf("scanning for %s...\n", duration)
+	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), duration))
 	ble.Scan(ctx, true, p.found, ftr)
 	return &p
 }
