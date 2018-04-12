@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"time"
 
 	"github.com/go-ble/ble"
 )
@@ -47,12 +48,22 @@ func (p *Puck) command(name []string, cmd []byte) error {
 
 // write performs the writes
 func (p *Puck) write(cmd []byte, device ble.Addr) {
-	ctx := context.Background()
-	client, _ := ble.Dial(ctx, device)
-	services, _ := client.DiscoverServices(nil)
+	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), 2*time.Second))
+	client, err := ble.Dial(ctx, device)
+	if err != nil {
+		log.Printf("can't dial : %s", err)
+	}
+	services, err := client.DiscoverServices(nil)
+	if err != nil {
+		log.Printf("can't discover services : %s", err)
+	}
+
 	for _, s := range services {
 		if s.UUID.Equal(uartServiceID) {
-			characteristics, _ := client.DiscoverCharacteristics(nil, s)
+			characteristics, err := client.DiscoverCharacteristics(nil, s)
+			if err != nil {
+				log.Printf("can't discover characteristics : %s", err)
+			}
 			for _, c := range characteristics {
 				if c.UUID.Equal(uartServiceRXCharID) {
 					log.Printf("writing...%s", string(cmd))
@@ -65,5 +76,8 @@ func (p *Puck) write(cmd []byte, device ble.Addr) {
 		}
 	}
 	// close connection
-	client.CancelConnection()
+	err = client.CancelConnection()
+	if err != nil {
+		log.Printf("can't cancel connection : %s", err)
+	}
 }
