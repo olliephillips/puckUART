@@ -36,9 +36,15 @@ puck.Load()
 puck.Func("alarm")
 
 // Reset all Pucks
-// accepts optional name param for specific puck
+// accepts optional name param for specific Puck
 puck.Reset()
 
+// Obtain RSSI of Puck or Pucks
+// accepts optional name param for specific Puck
+rssi, _:= puck.ReadRSSI()
+for _, v := range rssi {
+	log.Println(v)
+}
 ```
 
 ## License
