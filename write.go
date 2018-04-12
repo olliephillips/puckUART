@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"time"
 
 	"github.com/go-ble/ble"
 )
@@ -48,7 +47,12 @@ func (p *Puck) command(name []string, cmd []byte) error {
 
 // write performs the writes
 func (p *Puck) write(cmd []byte, device ble.Addr) {
-	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), 2*time.Second))
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	ctx = ble.WithSigHandler(ctx, func() {
+		log.Fatal("cancel signal received")
+	})
 	client, err := ble.Dial(ctx, device)
 	if err != nil {
 		log.Printf("can't dial : %s", err)
