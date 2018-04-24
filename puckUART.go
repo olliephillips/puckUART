@@ -13,7 +13,15 @@ import (
 
 // Puck stores addresses of detected pucks
 type Puck struct {
-	device map[string]ble.Addr
+	device  map[string]ble.Addr
+	Message chan Message
+}
+
+// Message used for reading
+type Message struct {
+	Payload   string
+	Device    string
+	Timestamp time.Time
 }
 
 var uartServiceID = ble.MustParse("6e400001-b5a3-f393-e0a9-e50e24dcca9e")
@@ -25,6 +33,7 @@ func Scan(duration time.Duration, filter ...string) *Puck {
 	var filterString = "Puck.js"
 	p := Puck{}
 	p.device = make(map[string]ble.Addr)
+	p.Message = make(chan Message)
 
 	// scan filter?
 	if len(filter) == 1 {
@@ -45,6 +54,7 @@ func Scan(duration time.Duration, filter ...string) *Puck {
 	log.Printf("scanning for %s...\n", duration)
 	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), duration))
 	ble.Scan(ctx, true, p.found, ftr)
+
 	return &p
 }
 
