@@ -38,13 +38,6 @@ puck.Func("alarm")
 // Reset all Pucks
 // accepts optional name param for specific Puck
 puck.Reset()
-
-// Obtain RSSI of Puck or Pucks
-// accepts optional name param for specific Puck
-rssi, _:= puck.ReadRSSI()
-for _, v := range rssi {
-	log.Println(v)
-}
 ```
 
 ### Read/Subscribe examples
@@ -52,6 +45,13 @@ for _, v := range rssi {
 // Scan for 5 seconds
 // accepts optional second param to filter based on substring of name
 p := puckUART.Scan(5 * time.Second)
+
+// Obtain RSSI of Puck or Pucks
+// accepts optional name param for specific Puck
+rssi, _:= puck.ReadRSSI()
+for _, v := range rssi {
+	log.Println(v)
+}
 
 // Subscribe to TX characterstic on all Pucks 
 // accepts optional name param for subscribing to specific Puck
