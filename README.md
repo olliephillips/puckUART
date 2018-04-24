@@ -2,13 +2,13 @@
 
 ## A go package for working with Espruino Puck.js over Bluetooth LE
 
-Uses the Nordic UART service. Currently only supports RX characteristic as sufficient for my project.
-
-Includes some Espruino API wrapper methods. Hope to add some TX methods to read console and status
+Uses the Nordic UART service. Supports both TX (read) and RX (write) characteristics. Includes some Espruino API wrapper methods.
 
 ### Usage
 
-Some examples of current usage below:
+Some examples of current usage below.
+
+### Write examples
 
 ```go
 // Scan for 5 seconds
@@ -44,6 +44,20 @@ puck.Reset()
 rssi, _:= puck.ReadRSSI()
 for _, v := range rssi {
 	log.Println(v)
+}
+```
+
+### Read/Subscribe examples
+```go
+// Scan for 5 seconds
+// accepts optional second param to filter based on substring of name
+p := puckUART.Scan(5 * time.Second)
+
+// Subscribe to TX characterstic on all Pucks 
+// accepts optional name param for subscribing to specific Puck
+p.Subscribe()
+for msg := range p.Message {
+	log.Println(msg.Payload, msg.Device, msg.Timestamp)
 }
 ```
 
