@@ -56,6 +56,8 @@ for _, v := range rssi {
 // Subscribe to TX characterstic on all Pucks 
 // accepts optional name param for subscribing to specific Puck
 p.Subscribe()
+
+// Set up a listener for messages
 for msg := range p.Message {
 	log.Println(msg.Payload, msg.Device, msg.Timestamp)
 }
